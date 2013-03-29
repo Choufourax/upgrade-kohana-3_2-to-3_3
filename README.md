@@ -1,8 +1,8 @@
 A PHP script to upgrade from Kohana 3.2.x to Kohana 3.3.x
 
-Based on the works of :
+Based on the works of :  
 => Daan (http://stackoverflow.com/users/987864/daan)
-http://stackoverflow.com/questions/13935621/how-to-upgrade-from-kohana-3-2-to-3-3-implementing-psr-0 
+http://stackoverflow.com/questions/13935621/how-to-upgrade-from-kohana-3-2-to-3-3-implementing-psr-0  
 => Alex Cartwright <alexc223@gmail.com>
 https://github.com/AlexC/kohana-upgrade-script
 
