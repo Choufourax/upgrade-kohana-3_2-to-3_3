@@ -14,8 +14,9 @@ the official Kohana 3.3 upgrade guide before running this script.
 http://kohanaframework.org/3.3/guide/kohana/upgrading
 
 ------------------------------------------------------
---- Be smart, be safe :
---- BACKUP YOUR WEBSITE BEFORE RUNNING THIS SCRIPT ---
+
+Be smart, be safe :
+BACKUP YOUR WEBSITE BEFORE RUNNING THIS SCRIPT
 ------------------------------------------------------
 
 This script handles :
@@ -39,14 +40,16 @@ Things to do :
 - improve regex to prevent replacement mistakes between class and functions
 
 HOW TO USE
-=====================================================================
+------------------------------------------------------
 
 This script is to use on your local version of your website
 Do not use on your production server (as you will experiment permission issues as your server is not supose to let you modify PHP files dynamically for security reasons)
 Once your local site is updated and you test everything, upload files via FTP to your production server. 
 
 1/ Backup your site
+
 2/ Download kohana 3.3
+
 3/ Manulay replace the following folders from Kohana 3.3 to the website to upgrade :
 - system
 - modules/auth
@@ -58,15 +61,17 @@ Once your local site is updated and you test everything, upload files via FTP to
 - modules/orm
 - modules/unittest
 - modules/userguide
+
 4/ Edit the settings at the begining of the script 
+
 5/ Run this file
-	=> if you user a Mac : the better way will be use BBedit and chose in the '#!' menu "Run in Terminal"
-  => you can also open a Terminal, go to the script folder and type ./upgrade-kohana.php 
-	=> you can also just run the script from your local webserver http://localhost/website/upgrade-kohana.php but it's not recommended as you may have some permissions problem to modify the PHP files
+   - if you use a Mac : the better way will be use BBedit and chose in the '#!' menu "Run in Terminal"  
+   - you can also open a Terminal, go to the script folder and type ./upgrade-kohana.php  
+   - you can also just run the script from your local webserver http://localhost/website/upgrade-kohana.php but it's not recommended as you may have some permissions problem to modify the PHP files  
 
-=====================================================================
+------------------------------------------------------
 
-
+AUTHOR
 
 @author Erwan Dupeux-Maire
 www.upyupy.fr
