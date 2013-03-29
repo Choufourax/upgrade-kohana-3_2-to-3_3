@@ -1,4 +1,5 @@
-A PHP script to upgrade from Kohana 3.2.x to Kohana 3.3.x
+
+A PHP SCRIPT TO UPGRADE FROM KOHANA 3.2.X TO KOHANA 3.3.X
 
 Based on the works of :  
 => Daan (http://stackoverflow.com/users/987864/daan)
@@ -65,7 +66,7 @@ Once your local site is updated and you test everything, upload files via FTP to
 4/ Edit the settings at the begining of the script 
 
 5/ Run this file
-   - if you use a Mac : the better way will be use BBedit and chose in the '#!' menu "Run in Terminal"  
+   - if you use a Mac : the best way will be to open the php file with BBedit and chose in the '#!' menu "Run in Terminal"  
    - you can also open a Terminal, go to the script folder and type ./upgrade-kohana.php  
    - you can also just run the script from your local webserver http://localhost/website/upgrade-kohana.php but it's not recommended as you may have some permissions problem to modify the PHP files  
 
