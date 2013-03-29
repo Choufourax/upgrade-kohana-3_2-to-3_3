@@ -378,7 +378,6 @@ foreach ($dirs as $dir)
 			 )'
 				)
 			);
-			exit();
 		}
 	}
 	
