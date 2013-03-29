@@ -3,6 +3,7 @@
 /*
 
 A PHP SCRIPT TO UPGRADE FROM KOHANA 3.2.X TO KOHANA 3.3.X
+------------------------------------------------------
 
 Based on the works of :  
 => Daan (http://stackoverflow.com/users/987864/daan)
@@ -76,10 +77,11 @@ Once your local site is updated and you test everything, upload files via FTP to
 ------------------------------------------------------
 
 AUTHOR
+------------------------------------------------------
 
-@author Erwan Dupeux-Maire
-www.upyupy.fr
-www.bwat.fr
+@author Erwan Dupeux-Maire  
+www.upyupy.fr  
+www.bwat.fr  
 
 */
 
