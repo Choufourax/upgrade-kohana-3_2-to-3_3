@@ -33,7 +33,6 @@ This script handles :
 - New syntax for Browser cache checking
 - New syntax for Redirects (HTTP 300, 301, 302, 303, 307)
 - Apply the changes listed above in Modules too
-- Moving the vendor folder
 
 This script does not handle :
 - HTTP Exceptions
@@ -94,6 +93,7 @@ SETTINGS
 // START OF SETTINGS
 // Path to kohana v3.2 website to update 
 $path = '/Library/WebServer/Documents/work/bwat/bwat/';
+$path = '/Library/WebServer/Documents/work/clubDA/httpdocs/';
 
 // List of folders to process (at least $path.'application' )
 // You sould not use this script to upgrade third party modules that already have a v3.3 version.
@@ -354,13 +354,16 @@ foreach ($dirs as $dir)
 			)
 		);
 		
-		// #2 move vendors
+		// #??? move vendors
+		/*
+		// Deprecated => useless
 		if (file_exists($dir.'/vendor'))
 		{
 			rcopy($dir.'/vendor', $dir.'/../vendor' );
 		}
+		*/
 		
-		// #2bis add ignore_on_delete value in cache config if exists
+		// #2 add ignore_on_delete value in cache config if exists
 		// (I experiment errors if ignore_on_delete is not an array in Kohana 3.3.0)
 		if (file_exists($dir.'/config/cache.php'))
 		{
