@@ -30,7 +30,6 @@ This script handles :
 - New syntax for Browser cache checking
 - New syntax for Redirects (HTTP 300, 301, 302, 303, 307)
 - Apply the changes listed above in Modules too
-- Moving the vendor folder
 
 This script does not handle :
 - HTTP Exceptions
