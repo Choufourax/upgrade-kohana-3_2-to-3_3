@@ -93,11 +93,12 @@ SETTINGS
 // START OF SETTINGS
 // Path to kohana v3.2 website to update 
 $path = '/Library/WebServer/Documents/work/bwat/bwat/';
-$path = '/Library/WebServer/Documents/work/clubDA/httpdocs/';
+//$path = '/Library/WebServer/Documents/work/clubDA/httpdocs/';
 
 // List of folders to process (at least $path.'application' )
 // You sould not use this script to upgrade third party modules that already have a v3.3 version.
 $dirs = array (
+	
 	$path.'application',
 	$path.'modules/a1',
 	$path.'modules/a2',
@@ -152,12 +153,15 @@ $specials = array (
     'explodelimit' => 'ExplodeLimit',
     'datespan' => 'DateSpan',
     'autolinkemails' => 'AutoLinkEmails',
-    'arrcallback' => 'ArrCallback'
+    'arrcallback' => 'ArrCallback',
+    'acl' => 'ACL'
 );
 
 
 // END OF SETTINGS
 
+// global variable that will memorize models name
+$models = array();
 
 // Function to remove folders and files 
 // @author : http://stackoverflow.com/users/1226894/baba
@@ -214,7 +218,7 @@ function pregReplaceInFile($file, $search, $replace)
 
 function rewritteFolderFiles($dir, $shortdir)
 {
-	global $path, $skip, $specials;
+	global $path, $skip, $specials, $models;
     //echo $dir."<br />\n";
   	
   	if (!is_dir($dir))
@@ -260,8 +264,18 @@ function rewritteFolderFiles($dir, $shortdir)
             {
             	// this array will be use to find/replace all occurences of a class name
             	// Explanation and limits of this regex : see #NOTE1 at the end of this file.
-            	$arr['/(\(|\s|\t)('.$classname.')(\s)*(\(|\:\:|extends)/i'] = '$1'.$classname.'$3$4';
+            	$arr['/(\(|\s|\t|\.|\=|\!)('.$classname.')(\s)*(\(|\:\:|extends|implements|\{)/i'] = '$1'.$classname.'$3$4';
+            	$arr['/(instanceof)(\s)*('.$classname.')/i'] = '$1$2'.$classname.'';
             	
+            	if (stripos($dir, '/model') !== false)
+            	{
+            		// special correction for ORM
+            		// will replace ORM::factory('news') by ORM::factory('News') 
+            		$modelname = str_replace('Model_','',$classname);
+    				$arr['/(ORM\:\:factory\()(\s)*(\\\')*(\")*('.$modelname.')(\")*(\\\')*(\s)*(\)|\,)/i'] = '$1$2$3$4'.$modelname.'$6$7$8$9';
+    				// Save model name
+    				$models[] = $modelname;
+            	}
             	$key = str_replace('.php', '', $ff);
             	if (isset($specials[strtolower($key)]))
 				{
@@ -415,15 +429,27 @@ foreach ($dirs as $dir)
 				'\'orm\'',
 				'"orm"',
 				'\'file\'',
-				'"file"'
+				'"file"',
+				'\'auth\'',
+				'"auth"',
+				'\'acl\'',
+				'"acl"',
+				'\'ACL_',
+				'"acl_'
 			), 
 			array(
 				'\'ORM\'',
 				'"ORM"',
 				'\'File\'',
-				'"File"'
+				'"File"',
+				'\'Auth\'',
+				'"Auth"',
+				'\'ACL\'',
+				'"ACL"',
+				'\'ACL_',
+				'"ACL_'
 			)
-		);		
+		);
 	}
 	
 	// #5 in /classes and its subdirectories
@@ -450,9 +476,10 @@ $listOfRegexReplace['/(Html)(\:\:)/i'] = 'HTML$2';
 $listOfRegexReplace['/(Url)(\:\:)/i'] = 'URL$2';
 $listOfRegexReplace['/(Http)(\:\:)/i'] = 'HTTP$2';
 $listOfRegexReplace['/(Utf8)(\:\:)/i'] = 'UTF8$2';
+$listOfRegexReplace['/(Form)(\:\:)/i'] = 'Form$2';
 
 // #11 Replace orm::factory by ORM:factory etc....
-$listOfRegexReplace['/(Orm)(\:\:)/i'] = 'ORM$2';
+$listOfRegexReplace['/(\s|\=|\()(Orm)(\:\:)/i'] = '$1ORM$3';
 
 // #12 Update Redirects (HTTP 300, 301, 302, 303, 307)
 // ->request->redirect becomes ->redirect
@@ -507,14 +534,62 @@ if ($checkInViews)
 	}
 }
 
+
+// #16 change model names in ORM relation (in $_has_many, $_belongs_to,.....)
+echo '---PROCESSING MODELS RELATIONSHIP SETTINGS---'."<br />\n";
+
+$modelReg = array();
+foreach ($models as $name)
+{
+	// Regex to search for : 'model' => 'modelname'
+	$modelReg['/(\'|\")(model)(\'|\")(\s)*(\=\>)(\s)*(\'|\")('.$name.')(\'|\")/i'] = '$1$2$3$4$5$6$7'.$name.'$9';
+}
+if (count($modelReg))
+{
+	foreach ($dirs as $dir)
+	{
+		$dir .= '/classes/Model';
+		echo 'Processing '.$dir."......<br />\n";
+	
+		replaceClassNameInFolder(
+			$dir,
+			array_keys($modelReg),// arrSearch
+			$modelReg // arrSearch
+		);
+	}
+}
+
+// #17 Personnal test
+echo '---PROCESSING PERSONNAL TEST---'."<br />\n";
+
+$modelReg = array();
+foreach ($models as $name)
+{
+	$modelReg['/(\$\_modele\_name)(\s)*(\=)(\s)*(\'|\")('.$name.')(\'|\")/i'] = '$1$2$3$4$5'.$name.'$7';
+}
+if (count($modelReg))
+{
+	foreach ($dirs as $dir)
+	{
+		$dir .= '/classes/Controller/Backoffice';
+		echo 'Processing '.$dir."......<br />\n";
+	
+		replaceClassNameInFolder(
+			$dir,
+			array_keys($modelReg),// arrSearch
+			$modelReg // arrSearch
+		);
+	}
+}
+
 /*
 // #NOTE1 
-// Explaination of the regex /(\(|\s|\t)(a1)(\s)*(\(|\:\:|extends)/i
+// Explaination of the regex /(\(|\s|\t|\.)(a1)(\s)*(\(|\:\:|extends|implements|\{)/i
 // Find classname in a file : 
-// - check something that start with space, tab or "("
+// - check something that start with space, tab, dot or "("
 // - followed by the name of the class (here "a1")
 // - followed by one, several or no space
-// - followed by "(" or ':' or "extends")
+// - followed by "(" or ':' or "extends" or "implements" or "{")
 // - not cas sensitive
 //
 // The limit for now : can not distinct class declaration vs function declaration
@@ -536,7 +611,7 @@ a1();
 	// aaa1
 }';
 $example = preg_replace(
-	array('/(\(|\s|\t)(a1)(\s)*(\(|\:\:|extends)/i'), 
+	array('/(\(|\s|\t|\.)(a1)(\s)*(\(|\:\:|extends|implements|\{)/i'), 
 	array('$1A1$3$4'),
 	$example
 );
