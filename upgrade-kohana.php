@@ -381,20 +381,23 @@ foreach ($dirs as $dir)
 		// (I experiment errors if ignore_on_delete is not an array in Kohana 3.3.0)
 		if (file_exists($dir.'/config/cache.php'))
 		{
-			pregReplaceInFile(
-				$dir.'/config/cache.php', 
-				array(
-					'/((\'driver\')(\s)*(\=>)(\s)*(\'file\'))/i',
-				), 
-				array(
-					'$1,
-			 \'ignore_on_delete\'   => array(
-					\'.gitignore\',
-					\'.git\',
-					\'.svn\'
-			 )'
-				)
-			);
+			if (strpos(file_get_contents($dir.'/config/cache.php'), 'ignore_on_delete') === false)
+			{
+				pregReplaceInFile(
+					$dir.'/config/cache.php', 
+					array(
+						'/((\'driver\')(\s)*(\=>)(\s)*(\'file\'))/i',
+					), 
+					array(
+						'$1,
+				 \'ignore_on_delete\'   => array(
+						\'.gitignore\',
+						\'.git\',
+						\'.svn\'
+				 )'
+					)
+				);
+			}
 		}
 	}
 	
